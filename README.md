@@ -2,7 +2,37 @@
 
 HTTP entity cache with conditional GET support.
 
+`connect-entity-cache` is a very simple in-memory cache for caching HTTP entities (i.e. contents of files, or some dynamicly generated content), provided as [Connect](http://www.senchalabs.org/connect/) middleware. It supports conditional GET requests (based on `If-Last-Modified` and/or `If-None-Match` request headers) for maximum efficiency.
+
+Usinge the cache is a bit like Amazon S3: You need to supply both the entity (file) contents and any headers that you want to be sent with a HTTP response that's served from the cache. Also like S3, you can add content that has already been gzipped, making gzipping at a later stage unnecessary.
+
+The main difference from S3 is that the cache does not have a concept of folders. All entities are uniquely identified by their resource path.
+
 ## Usage
+
+```javascript
+var ConnectEntityCache = require("connect-entity-cache")
+var connect = require("connect")
+
+var cache = new ConnectEntityCache({log: console.log})
+cache.cacheEntity("/",new Buffer("Hello World"),{"content-type":"text/plain"})
+var app = connect()
+app.use(cache)
+```
+
+## Configuration
+
+You can pass a log and a warn function to the `ConnectEntityCache` constructor in an options object, as `log` and `warn`, respectively. `log` defaults to a noop, `warn` defaults to `console.warn`.
+
+## Notes
+
+* connect-entity-cache uses [infer-entity-headers](https://github.com/meryn/infer-entity-headrs) to infer entity headers.
+* You can provide response headers you want to be sent along. These will always take precedence.
+* If you pass a string instead of a buffer as entity, then the string is assumed to be UTF-8.
+* You can cache gzipped entities. Just make sure you add `"content-encoding": "gzip"` to the headers.
+* There can be only one entity for each path. There is no content-negotiation.
+* There's currently no way to remove cached entities.
+* connect-entity-cache also properly responds to `HEAD` and `OPTIONS` requests.
 
 ## Credits
 
