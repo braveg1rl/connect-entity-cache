@@ -1,0 +1,31 @@
+{
+  "name": "connect-entity-cache",
+  "description": "HTTP entity cache with conditional GET support.",
+  "keywords": [],
+  "version": "0.0.0",
+  "author": "Meryn Stol <merynstol@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/meryn/connect-entity-cache",
+  "bugs": "https://github.com/meryn/connect-entity-cache/issues",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/meryn/connect-entity-cache.git"
+  },
+  "private": false,
+  "dependencies": {},
+  "devDependencies": {
+    "coffee-script": "~1.6.2",
+    "mocha": "~1.9.0"
+  },
+  "optionalDependencies": {},
+  "engines": {
+    "node": "0.10.x",
+    "npm": "1.2.x"
+  },
+  "main": "lib/connect-entity-cache.js",
+  "scripts": {
+    "prepublish": "npm test",
+    "pretest": "make build",
+    "test": "make test"
+  }
+}
