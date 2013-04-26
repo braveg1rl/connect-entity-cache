@@ -1,32 +1,29 @@
 crypto = require "crypto"
-parseURL = require("url").parse
+inferHeaders = require "infer-entity-headers"
 
 module.exports = class ConnectEntityCache
   constructor: (options = {}) ->
     @cache = {}
     @log = options.log or (msg) ->
+    @warn = options.warn or console.warn
   
-  cacheEntity: (path, headers, entity) ->
+  cacheEntity: (path, entity, headers) ->
     @log "Caching #{path}"
-    if headers["last-modified"]?
-      lastModified = new Date headers["last-modified"]
-    else
-      lastModified = new Date
-      headers["last-modified"] = lastModified.toUTCString()
-    if headers["etag"]?
-      resourceTag = headers["etag"]
-    else
-      resourceTag = crypto.createHash('md5').update(entity).digest("hex")
-      headers["etag"] = resourceTag
+    entity = new Buffer entity if typeof entity is "string"
+    unless entity instanceof Buffer
+      throw new Error "Entity must either be a buffer or a string. #{entity}"
+    if headers["content-length"] and headers["content-length"] isnt String(entity.length)
+      @warn "content-length header (#{headers["content-length"]}) does not match entity length (#{entity.length})"
+    headers = inferHeaders path, entity, headers
     @cache[path] =
       path: path
       headers: headers
       entity: entity
-      lastModified: lastModified
-      eTag: resourceTag
+      lastModified: new Date headers['last-modified']
+      eTag: headers['etag']
 
   handle: (req, res, next) =>
-    return next() unless data = @cache[parseURL(req.url).pathname]
+    return next() unless data = @cache[req.url]
     switch req.method
       when "OPTIONS" then handleOptions req, res, next 
       when "GET", "HEAD" then @handleProper data, req, res, next
@@ -58,7 +55,8 @@ module.exports = class ConnectEntityCache
 isModified = (data, headers) ->
   return true unless headers['if-modified-since']? or headers['if-none-match']?
   if headers['if-modified-since']?
-    return true if data.lastModified > new Date headers['if-modified-since']
+    if data.lastModified > new Date headers['if-modified-since']
+      return true 
   if headers['if-none-match']?
     return true if data.eTag isnt headers['if-none-match']
   return false
