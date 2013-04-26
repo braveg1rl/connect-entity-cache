@@ -2,7 +2,7 @@
   "name": "connect-entity-cache",
   "description": "HTTP entity cache with conditional GET support.",
   "keywords": [],
-  "version": "0.0.0",
+  "version": "0.0.1",
   "author": "Meryn Stol <merynstol@gmail.com>",
   "license": "MIT",
   "homepage": "https://github.com/meryn/connect-entity-cache",
