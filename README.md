@@ -1,5 +1,7 @@
 # connect-entity-cache [![Build Status](https://travis-ci.org/meryn/connect-entity-cache.png?branch=master)](https://travis-ci.org/meryn/connect-entity-cache) [![Dependency Status](https://david-dm.org/meryn/connect-entity-cache.png)](https://david-dm.org/meryn/connect-entity-cache)
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/braveg1rl/connect-entity-cache.svg)](https://greenkeeper.io/)
+
 HTTP entity cache with conditional GET support.
 
 `connect-entity-cache` is a very simple in-memory cache for caching HTTP entities (i.e. contents of files, or some dynamicly generated content), provided as [Connect](http://www.senchalabs.org/connect/) middleware. It supports conditional GET requests (based on `If-Last-Modified` and/or `If-None-Match` request headers) for maximum efficiency.
